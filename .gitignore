@@ -1,0 +1,12 @@
+.vscode/
+src/.vscode/
+
+*.class
+
+src/mysql-connector-j-9.6.0/
+src/mysql-connector-j-9.6.0.zip
+src/lib/
+
+*.log
+Thumbs.db
+Desktop.ini

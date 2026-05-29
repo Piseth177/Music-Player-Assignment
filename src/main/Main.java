@@ -1,22 +1,15 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import db.DatabaseManager;
-import model.Album;
 import model.Artist;
 import model.Playlist;
 import model.Song;
 import service.MusicPlayer;
 
-// Entry point of the music application.
-// Loads sample data, creates playlists, and demonstrates
-// the functionality of the MusicPlayer system.
-
 public class Main {
-    // Application entry point. Initializes the database,
-    // creates a music player, demonstrates playback controls,
-    // and displays search/filter features.
 
     public static void main(String[] args) {
         DatabaseManager databaseManager = new DatabaseManager();
@@ -25,75 +18,267 @@ public class Main {
         MusicPlayer player = new MusicPlayer("CAM Music Player");
         player.loadLibrary(songLibrary);
 
-        System.out.println("Database: " + DatabaseManager.getDatabaseName());
-        System.out.println("Songs loaded: " + songLibrary.size());
+        ArrayList<Playlist> playlists = new ArrayList<>();
+        playlists.add(new Playlist(1, "My Playlist"));
+        int currentPlaylistIndex = 0;
 
-        System.out.println("\nAll Songs in Library:");
-        for (Song song : songLibrary) {
-            song.displayInfo();
-        }
+        System.out.println("Welcome to CAM Music Player (" + songLibrary.size() + " songs loaded)");
 
-        Playlist studyPlaylist = new Playlist(1, "Study Playlist");
+        Scanner scanner = new Scanner(System.in);
 
-        if (songLibrary.size() >= 3) {
-            studyPlaylist.addSong(songLibrary.get(0));
-            studyPlaylist.addSong(songLibrary.get(1));
-            studyPlaylist.addSong(songLibrary.get(2));
-        }
+        while (true) {
+            Playlist currentPlaylist = playlists.get(currentPlaylistIndex);
 
-        studyPlaylist.displayInfo();
+            System.out.println("\n===== MENU =====");
+            System.out.println("--- Library ---");
+            System.out.println("1.  List all songs");
+            System.out.println("2.  Search songs");
+            System.out.println("--- Playlist (" + currentPlaylist.getName() + ") ---");
+            System.out.println("3.  Create new playlist");
+            System.out.println("4.  Switch playlist");
+            System.out.println("5.  Add song to playlist");
+            System.out.println("6.  Remove song from playlist");
+            System.out.println("7.  Show playlist");
+            System.out.println("8.  Play song from playlist");
+            System.out.println("--- Playback ---");
+            System.out.println("9.  Pause");
+            System.out.println("10. Next");
+            System.out.println("11. Previous");
+            System.out.println("--- Queue ---");
+            System.out.println("12. Show queue");
+            System.out.println("13. Shuffle queue");
+            System.out.println("14. Clear queue");
+            System.out.println("15. Add playlist to queue");
+            System.out.println("--- History ---");
+            System.out.println("16. Show history");
+            System.out.println("0.  Exit");
+            System.out.print("Choose: ");
 
-        player.addPlaylistToQueue(studyPlaylist);
-        player.displayQueue();
+            String input = scanner.nextLine();
+            int choice;
 
-        player.play();
-        player.skipToNext();
-        player.skipToNext();
-        player.skipToPrevious();
+            try {
+                choice = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+                continue;
+            }
 
-        player.pause();
-        player.setVolume(80);
+            switch (choice) {
+                case 0:
+                    System.out.println("Goodbye!");
+                    scanner.close();
+                    return;
 
-        System.out.println("\nSearch by title:");
-        Song foundSong = player.searchSongByTitle("Coffee Time");
+                case 1:
+                    System.out.println("\nAll Songs:");
+                    for (Song song : songLibrary) {
+                        song.displayInfo();
+                    }
+                    break;
 
-        if (foundSong != null) {
-            foundSong.displayInfo();
-        } else {
-            System.out.println("Song not found.");
-        }
+                case 2:
+                    while (true) {
+                        System.out.println("  Search by:");
+                        System.out.println("    a. Title");
+                        System.out.println("    b. Artist");
+                        System.out.println("    c. Album");
+                        System.out.println("    d. Genre");
+                        System.out.println("    e. Title + Artist");
+                        System.out.println("    f. Title + Artist + Genre");
+                        System.out.println("    x. Back to menu");
+                        System.out.print("  Choose (a-f, x): ");
+                        String searchType = scanner.nextLine().trim().toLowerCase();
 
-        System.out.println("\nFilter by genre: Pop");
-        ArrayList<Song> popSongs = player.filterSongsByGenre("Pop");
+                        if (searchType.equals("x")) break;
 
-        if (popSongs.isEmpty()) {
-            System.out.println("No songs found for this genre.");
-        } else {
-            for (Song song : popSongs) {
-                song.displayInfo();
+                        ArrayList<Song> results = null;
+
+                        switch (searchType) {
+                            case "a":
+                                System.out.print("Enter title: ");
+                                String st = scanner.nextLine();
+                                results = player.searchSong(st);
+                                break;
+                            case "b":
+                                System.out.print("Enter artist: ");
+                                String sa = scanner.nextLine();
+                                results = player.searchSongsByArtist(sa);
+                                if (results != null && !results.isEmpty()) {
+                                    Artist artist = results.get(0).getArtist();
+                                    System.out.println("\nArtist: " + artist.getName() + " (" + artist.getAlbumListSize() + " album(s))");
+                                }
+                                break;
+                            case "c":
+                                System.out.print("Enter album: ");
+                                String sal = scanner.nextLine();
+                                results = player.searchSongsByAlbum(sal);
+                                break;
+                            case "d":
+                                System.out.print("Enter genre: ");
+                                String sg = scanner.nextLine();
+                                results = player.filterSongsByGenre(sg);
+                                break;
+                            case "e":
+                                System.out.print("Enter title: ");
+                                String t2 = scanner.nextLine();
+                                System.out.print("Enter artist: ");
+                                String a2 = scanner.nextLine();
+                                results = player.searchSong(t2, a2);
+                                break;
+                            case "f":
+                                System.out.print("Enter title: ");
+                                String t3 = scanner.nextLine();
+                                System.out.print("Enter artist: ");
+                                String a3 = scanner.nextLine();
+                                System.out.print("Enter genre: ");
+                                String g3 = scanner.nextLine();
+                                results = player.searchSong(t3, a3, g3);
+                                break;
+                            default:
+                                System.out.println("Invalid choice.");
+                                continue;
+                        }
+
+                        if (results == null || results.isEmpty()) {
+                            System.out.println("No songs found.");
+                        } else {
+                            for (Song s : results) s.displayInfo();
+                            break;
+                        }
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter playlist name: ");
+                    String plName = scanner.nextLine();
+                    int newId = playlists.size() + 1;
+                    playlists.add(new Playlist(newId, plName));
+                    System.out.println("Playlist '" + plName + "' created.");
+                    break;
+
+                case 4:
+                    System.out.println("  Playlists:");
+                    for (int i = 0; i < playlists.size(); i++) {
+                        String mark = (i == currentPlaylistIndex) ? " <-- current" : "";
+                        System.out.println("    " + (i + 1) + ". " + playlists.get(i).getName() + mark);
+                    }
+                    System.out.print("  Switch to (1-" + playlists.size() + "): ");
+                    try {
+                        int switchTo = Integer.parseInt(scanner.nextLine()) - 1;
+                        if (switchTo >= 0 && switchTo < playlists.size()) {
+                            currentPlaylistIndex = switchTo;
+                            System.out.println("Switched to '" + playlists.get(currentPlaylistIndex).getName() + "'.");
+                        } else {
+                            System.out.println("Invalid number.");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid number.");
+                    }
+                    break;
+
+                case 5:
+                    System.out.print("Enter song index (1-" + songLibrary.size() + "): ");
+                    int idx;
+                    try {
+                        idx = Integer.parseInt(scanner.nextLine()) - 1;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid number.");
+                        break;
+                    }
+                    if (idx < 0 || idx >= songLibrary.size()) {
+                        System.out.println("Invalid index.");
+                        break;
+                    }
+                    System.out.print("Enter position (0 for end): ");
+                    int pos;
+                    try {
+                        pos = Integer.parseInt(scanner.nextLine());
+                    } catch (NumberFormatException e) {
+                        pos = currentPlaylist.getSongListSize();
+                    }
+                    if (pos <= 0) {
+                        currentPlaylist.addSong(songLibrary.get(idx));
+                    } else {
+                        currentPlaylist.addSong(songLibrary.get(idx), pos - 1);
+                    }
+                    break;
+
+                case 6:
+                    System.out.print("Enter song index (1-" + currentPlaylist.getSongListSize() + "): ");
+                    int removeIdx;
+                    try {
+                        removeIdx = Integer.parseInt(scanner.nextLine()) - 1;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid number.");
+                        break;
+                    }
+                    Song toRemove = currentPlaylist.getSongAt(removeIdx);
+                    if (toRemove == null) {
+                        System.out.println("Invalid index.");
+                    } else {
+                        currentPlaylist.removeSong(toRemove);
+                        System.out.println("Removed.");
+                    }
+                    break;
+
+                case 7:
+                    currentPlaylist.displayInfo();
+                    break;
+
+                case 8:
+                    System.out.print("Enter song index (1-" + currentPlaylist.getSongListSize() + "): ");
+                    try {
+                        int songIdx = Integer.parseInt(scanner.nextLine()) - 1;
+                        Song selectedSong = currentPlaylist.getSongAt(songIdx);
+                        if (selectedSong != null) {
+                            player.setCurrentSong(selectedSong);
+                            player.play();
+                        } else {
+                            System.out.println("Invalid index.");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid number.");
+                    }
+                    break;
+
+                case 9:
+                    player.pause();
+                    break;
+
+                case 10:
+                    player.skipToNext();
+                    break;
+
+                case 11:
+                    player.skipToPrevious();
+                    break;
+
+                case 12:
+                    player.displayQueue();
+                    break;
+
+                case 13:
+                    player.shuffleQueue();
+                    break;
+
+                case 14:
+                    player.clearQueue();
+                    break;
+
+                case 15:
+                    player.addPlaylistToQueue(currentPlaylist);
+                    break;
+
+                case 16:
+                    player.displayHistory();
+                    break;
+
+
+
+                default:
+                    System.out.println("Invalid choice.");
             }
         }
-
-        System.out.println("\nSearch by artist: Dara Music");
-        ArrayList<Song> artistSongs = player.searchSongsByArtist("Dara Music");
-
-        for (Song song : artistSongs) {
-            song.displayInfo();
-        }
-
-        player.displayHistory();
-        player.displayInfo();
-
-        System.out.println("\nStatic counters vs collection size:");
-        System.out.println("Song.getSongCount(): " + Song.getSongCount());
-        System.out.println("songLibrary.size(): " + songLibrary.size());
-
-        System.out.println("Artist.getArtistCount(): " + Artist.getArtistCount());
-        System.out.println("Album.getAlbumCount(): " + Album.getAlbumCount());
-        System.out.println("Playlist.getPlaylistCount(): " + Playlist.getPlaylistCount());
-
-        System.out.println("player.getLibrarySize(): " + player.getLibrarySize());
-        System.out.println("player.getQueueSize(): " + player.getQueueSize());
-        System.out.println("player.getHistorySize(): " + player.getHistorySize());
     }
 }

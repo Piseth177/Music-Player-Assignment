@@ -68,6 +68,31 @@ public class Playlist implements Displayable {
         return true;
     }
 
+
+
+    // Adds a song at a specific position in the playlist.
+
+    public boolean addSong(Song song, int position) {
+        if (song == null) {
+            System.out.println("Cannot add a null song to playlist.");
+            return false;
+        }
+
+        if (songs.contains(song)) {
+            System.out.println(song.getTitle() + " is already in playlist " + name + ".");
+            return false;
+        }
+
+        if (position < 0 || position > songs.size()) {
+            System.out.println("Invalid position. Adding to the end instead.");
+            songs.add(song);
+        } else {
+            songs.add(position, song);
+        }
+
+        return true;
+    }
+
     // Removes a song from this playlist.
 
     public boolean removeSong(Song song) {
@@ -126,6 +151,8 @@ public class Playlist implements Displayable {
 
         System.out.println("=====================================");
     }
+
+
 
     public static int getPlaylistCount() {
         return playlistCount;

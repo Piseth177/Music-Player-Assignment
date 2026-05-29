@@ -298,6 +298,85 @@ public class MusicPlayer implements Displayable, Playable, QueueManageable, Sear
         return null;
     }
 
+    // Searches for a song by title only.
+
+    public ArrayList<Song> searchSong(String title) {
+        ArrayList<Song> result = new ArrayList<>();
+
+        if (title == null || title.trim().isEmpty()) {
+            return result;
+        }
+
+        for (Song song : songLibrary) {
+            if (song.getTitle().toLowerCase().contains(title.trim().toLowerCase())) {
+                result.add(song);
+            }
+        }
+
+        return result;
+    }
+
+    // Searches for songs by title and artist name.
+
+    public ArrayList<Song> searchSong(String title, String artistName) {
+        ArrayList<Song> result = new ArrayList<>();
+
+        if (title == null || title.trim().isEmpty()) {
+            return result;
+        }
+
+        for (Song song : songLibrary) {
+            boolean matchesTitle = song.getTitle().toLowerCase().contains(title.trim().toLowerCase());
+            boolean matchesArtist = false;
+
+            if (artistName != null && !artistName.trim().isEmpty() && song.getArtist() != null) {
+                matchesArtist = song.getArtist().getName().equalsIgnoreCase(artistName.trim());
+            } else if (artistName == null || artistName.trim().isEmpty()) {
+                matchesArtist = true;
+            }
+
+            if (matchesTitle && matchesArtist) {
+                result.add(song);
+            }
+        }
+
+        return result;
+    }
+
+    // Searches for songs by title, artist name, and genre.
+
+    public ArrayList<Song> searchSong(String title, String artistName, String genre) {
+        ArrayList<Song> result = new ArrayList<>();
+
+        if (title == null || title.trim().isEmpty()) {
+            return result;
+        }
+
+        for (Song song : songLibrary) {
+            boolean matchesTitle = song.getTitle().toLowerCase().contains(title.trim().toLowerCase());
+            boolean matchesArtist = false;
+            boolean matchesGenre = false;
+
+            if (artistName != null && !artistName.trim().isEmpty() && song.getArtist() != null) {
+                matchesArtist = song.getArtist().getName().equalsIgnoreCase(artistName.trim());
+            } else if (artistName == null || artistName.trim().isEmpty()) {
+                matchesArtist = true;
+            }
+
+            if (genre != null && !genre.trim().isEmpty()) {
+                matchesGenre = song.getGenre().equalsIgnoreCase(genre.trim());
+            } else if (genre == null || genre.trim().isEmpty()) {
+                matchesGenre = true;
+            }
+
+            if (matchesTitle && matchesArtist && matchesGenre) {
+                result.add(song);
+            }
+        }
+
+        return result;
+    }
+
     // Searches the library for all songs by a given artist name (case-insensitive).
 
     @Override

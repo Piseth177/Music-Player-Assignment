@@ -33,4 +33,11 @@ public class MediaItem {
             this.title = title.trim();
         }
     }
+
+    // Displays basic info about this media item.
+    // Subclasses should override this to show their own extra details.
+
+    public void displayInfo() {
+        System.out.println("ID: " + id + " | Title: " + title);
+    }
 }

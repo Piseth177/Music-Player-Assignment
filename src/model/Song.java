@@ -102,6 +102,8 @@ public class Song extends MediaItem implements Displayable {
         return minutes + ":" + seconds;
     }
 
+
+
     @Override
     public void displayInfo() {
         String artistName = "Unknown Artist";
@@ -115,13 +117,11 @@ public class Song extends MediaItem implements Displayable {
             albumTitle = album.getTitle();
         }
 
-        System.out.println(
-            "Song ID: " + id +
-            " | Title: " + title +
-            " | Artist: " + artistName +
-            " | Album: " + albumTitle +
-            " | Genre: " + genre +" | Duration: " + getFormattedDuration()
-        );
+        super.displayInfo(); // prints: ID and Title from MediaItem
+        System.out.println("  Artist: " + artistName);
+        System.out.println("  Album: " + albumTitle);
+        System.out.println("  Genre: " + genre);
+        System.out.println("  Duration: " + getFormattedDuration());
     }
 
     // Returns the total number of Song instances created.

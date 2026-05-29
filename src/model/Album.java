@@ -100,13 +100,10 @@ public class Album extends MediaItem implements Displayable {
             artistName = artist.getName();
         }
 
-        System.out.println("\n========== Album Detail ==========");
-        System.out.println("Album ID: " + id);
-        System.out.println("Title: " + title);
-        System.out.println("Artist: " + artistName);
-        System.out.println("Release Year: " + releaseYear);
-        System.out.println("Songs: " + songs.size());
-        System.out.println("==================================");
+        super.displayInfo(); // prints: ID and Title from MediaItem
+        System.out.println("  Artist: " + artistName);
+        System.out.println("  Release Year: " + releaseYear);
+        System.out.println("  Total Songs: " + songs.size());
     }
 
     public void displaySongs() {

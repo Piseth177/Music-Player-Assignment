@@ -1,8 +1,8 @@
 package model;
 
-import interfaces.Displayable;
 
-public class Song extends MediaItem implements Displayable {
+
+public class Song extends MediaItem  {
     private Artist artist;
     private Album album;
     private String genre;
@@ -17,20 +17,6 @@ public class Song extends MediaItem implements Displayable {
         this.genre = cleanText(genre, "Unknown Genre");
         setDurationInSeconds(durationInSeconds);
         songCount++;
-    }
-
-    private static int validateId(int id) {
-        if (id > 0) {
-            return id;
-        }
-        return 0;
-    }
-
-    private static String cleanText(String value, String defaultValue) {
-        if (value == null || value.trim().isEmpty()) {
-            return defaultValue;
-        }
-        return value.trim();
     }
 
     // Returns the artist of this song.
@@ -116,8 +102,7 @@ public class Song extends MediaItem implements Displayable {
         if (album != null) {
             albumTitle = album.getTitle();
         }
-
-        super.displayInfo(); // prints: ID and Title from MediaItem
+        System.out.println("ID: " + id + " | Title: " + title);
         System.out.println("  Artist: " + artistName);
         System.out.println("  Album: " + albumTitle);
         System.out.println("  Genre: " + genre);
@@ -125,6 +110,7 @@ public class Song extends MediaItem implements Displayable {
     }
 
     // Returns the total number of Song instances created.
+
 
     public static int getSongCount() {
         return songCount;

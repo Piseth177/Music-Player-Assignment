@@ -1,21 +1,36 @@
 package model;
 
+import interfaces.Displayable;
+
 // Base class for all media items in the music system.
 // Provides common fields (id, title) and basic accessors.
 
-public class MediaItem {
-    protected int id;
-    protected String title;
+public abstract class MediaItem implements Displayable {
 
-    // Constructs a MediaItem with the given ID and title.
+    
+    protected int id;
+    protected String title; 
 
     public MediaItem(int id, String title) {
-        this.id = id;
-        setTitle(title);
+        this.id = validateId(id);
+        setTitle(cleanText(title, "Unknown Item"));
+    }
+
+    public static int validateId(int id) {
+        if (id > 0) {
+            return id;
+        }
+        return 0;
+    }
+
+    public static String cleanText(String value, String defaultValue) {
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;    
+        }
+        return value.trim();
     }
 
     // Returns the unique identifier of this media item.
-
     public int getId() {
         return id;
     }
@@ -34,10 +49,8 @@ public class MediaItem {
         }
     }
 
-    // Displays basic info about this media item.
-    // Subclasses should override this to show their own extra details.
+    // abstract method to be implemented by subclasses to display their own version of details
 
-    public void displayInfo() {
-        System.out.println("ID: " + id + " | Title: " + title);
-    }
+    public abstract void displayInfo();
 }
+    

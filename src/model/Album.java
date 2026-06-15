@@ -1,9 +1,7 @@
 package model;
 
 import java.util.ArrayList;
-import interfaces.Displayable;
-
-public class Album extends MediaItem implements Displayable {
+public class Album extends MediaItem  {
     private Artist artist;
     private int releaseYear;
     private ArrayList<Song> songs;
@@ -18,19 +16,7 @@ public class Album extends MediaItem implements Displayable {
         albumCount++;
     }
 
-    private static int validateId(int id) {
-        if (id > 0) {
-            return id;
-        }
-        return 0;
-    }
 
-    private static String cleanText(String value, String defaultValue) {
-        if (value == null || value.trim().isEmpty()) {
-            return defaultValue;
-        }
-        return value.trim();
-    }
 
     // Returns the artist who created this album.
 
@@ -99,8 +85,7 @@ public class Album extends MediaItem implements Displayable {
         if (artist != null) {
             artistName = artist.getName();
         }
-
-        super.displayInfo(); // prints: ID and Title from MediaItem
+        System.out.println("ID: " + id + " | Title: " + title);
         System.out.println("  Artist: " + artistName);
         System.out.println("  Release Year: " + releaseYear);
         System.out.println("  Total Songs: " + songs.size());

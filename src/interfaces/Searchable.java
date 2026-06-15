@@ -6,9 +6,6 @@ import model.Song;
 // Defines search and filter operations for the music library.
 
 public interface Searchable {
-    // Searches for a song by its exact title (case-insensitive).
-
-    Song searchSongByTitle(String title);
 
     // Searches for all songs by a given artist name (case-insensitive).
 

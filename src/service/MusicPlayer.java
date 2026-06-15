@@ -283,99 +283,67 @@ public class MusicPlayer implements Displayable, Playable, QueueManageable, Sear
 
     // Searches the library for a song whose title matches the given title (case-insensitive).
 
-    @Override
-    public Song searchSongByTitle(String title) {
-        if (title == null || title.trim().isEmpty()) {
-            return null;
-        }
+    
 
-        for (Song song : songLibrary) {
-            if (song.getTitle().equalsIgnoreCase(title.trim())) {
-                return song;
-            }
-        }
+// Searches for songs by title only (partial match).
+// Returns a list since a title alone may match many songs.
+public ArrayList<Song> searchSong(String title) {
+    ArrayList<Song> result = new ArrayList<>();
 
+    if (title == null || title.trim().isEmpty()) {
+        return result;
+    }
+
+    for (Song song : songLibrary) {
+        if (song.getTitle().toLowerCase().contains(title.trim().toLowerCase())) {
+            result.add(song);
+        }
+    }
+
+    return result;
+}
+
+// Searches for a song by title and artist name.
+// Returns a single Song since title + artist is specific enough to expect one match.
+public Song searchSong(String title, String artistName) {
+    if (title == null || title.trim().isEmpty()) {
         return null;
     }
 
-    // Searches for a song by title only.
+    for (Song song : songLibrary) {
+        boolean matchesTitle = song.getTitle().toLowerCase().contains(title.trim().toLowerCase());
+        boolean matchesArtist = (artistName == null || artistName.trim().isEmpty())
+            || (song.getArtist() != null && song.getArtist().getName().equalsIgnoreCase(artistName.trim()));
 
-    public ArrayList<Song> searchSong(String title) {
-        ArrayList<Song> result = new ArrayList<>();
-
-        if (title == null || title.trim().isEmpty()) {
-            return result;
+        if (matchesTitle && matchesArtist) {
+            return song;
         }
-
-        for (Song song : songLibrary) {
-            if (song.getTitle().toLowerCase().contains(title.trim().toLowerCase())) {
-                result.add(song);
-            }
-        }
-
-        return result;
     }
 
-    // Searches for songs by title and artist name.
+    return null;
+}
 
-    public ArrayList<Song> searchSong(String title, String artistName) {
-        ArrayList<Song> result = new ArrayList<>();
-
-        if (title == null || title.trim().isEmpty()) {
-            return result;
-        }
-
-        for (Song song : songLibrary) {
-            boolean matchesTitle = song.getTitle().toLowerCase().contains(title.trim().toLowerCase());
-            boolean matchesArtist = false;
-
-            if (artistName != null && !artistName.trim().isEmpty() && song.getArtist() != null) {
-                matchesArtist = song.getArtist().getName().equalsIgnoreCase(artistName.trim());
-            } else if (artistName == null || artistName.trim().isEmpty()) {
-                matchesArtist = true;
-            }
-
-            if (matchesTitle && matchesArtist) {
-                result.add(song);
-            }
-        }
-
-        return result;
+// Searches for a song by title, artist name, and genre.
+// Returns a single Song since all three fields is the most specific match possible.
+public Song searchSong(String title, String artistName, String genre) {
+    if (title == null || title.trim().isEmpty()) {
+        return null;
     }
 
-    // Searches for songs by title, artist name, and genre.
+    for (Song song : songLibrary) {
+        boolean matchesTitle = song.getTitle().toLowerCase().contains(title.trim().toLowerCase());
+        boolean matchesArtist = (artistName == null || artistName.trim().isEmpty())
+            || (song.getArtist() != null && song.getArtist().getName().equalsIgnoreCase(artistName.trim()));
+        boolean matchesGenre = (genre == null || genre.trim().isEmpty())
+            || song.getGenre().equalsIgnoreCase(genre.trim());
 
-    public ArrayList<Song> searchSong(String title, String artistName, String genre) {
-        ArrayList<Song> result = new ArrayList<>();
-
-        if (title == null || title.trim().isEmpty()) {
-            return result;
+        if (matchesTitle && matchesArtist && matchesGenre) {
+            return song;
         }
-
-        for (Song song : songLibrary) {
-            boolean matchesTitle = song.getTitle().toLowerCase().contains(title.trim().toLowerCase());
-            boolean matchesArtist = false;
-            boolean matchesGenre = false;
-
-            if (artistName != null && !artistName.trim().isEmpty() && song.getArtist() != null) {
-                matchesArtist = song.getArtist().getName().equalsIgnoreCase(artistName.trim());
-            } else if (artistName == null || artistName.trim().isEmpty()) {
-                matchesArtist = true;
-            }
-
-            if (genre != null && !genre.trim().isEmpty()) {
-                matchesGenre = song.getGenre().equalsIgnoreCase(genre.trim());
-            } else if (genre == null || genre.trim().isEmpty()) {
-                matchesGenre = true;
-            }
-
-            if (matchesTitle && matchesArtist && matchesGenre) {
-                result.add(song);
-            }
-        }
-
-        return result;
     }
+
+    return null;
+}
 
     // Searches the library for all songs by a given artist name (case-insensitive).
 

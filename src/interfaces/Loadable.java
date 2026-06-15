@@ -1,6 +1,6 @@
 package interfaces;
 
-import java.util.ArrayList;
+import java.util.List;
 import model.Song;
 
 // Defines data loading capabilities for the music system.
@@ -8,5 +8,5 @@ import model.Song;
 public interface Loadable {
     // Loads all songs from the data source.
 
-    ArrayList<Song> loadSongs();
+    List<Song> loadSongs();
 }

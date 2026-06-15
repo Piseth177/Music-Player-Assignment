@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import db.DatabaseManager;
 import model.Artist;
+import model.MediaItem;
 import model.Playlist;
 import model.Song;
 import service.MusicPlayer;
@@ -17,6 +18,15 @@ public class Main {
 
         MusicPlayer player = new MusicPlayer("CAM Music Player");
         player.loadLibrary(songLibrary);
+
+        //polymorphism demostration
+        ArrayList<MediaItem> library = new ArrayList<>();
+        for (Song s : songLibrary) {
+            library.add(s); 
+        }
+        for (MediaItem item : library) {
+            item.displayInfo(); 
+        }
 
         ArrayList<Playlist> playlists = new ArrayList<>();
         playlists.add(new Playlist(1, "My Playlist"));
@@ -70,7 +80,7 @@ public class Main {
                     scanner.close();
                     return;
 
-                case 1:
+            case 1:
                     System.out.println("\nAll Songs:");
                     for (Song song : songLibrary) {
                         song.displayInfo();
@@ -78,76 +88,10 @@ public class Main {
                     break;
 
                 case 2:
-                    while (true) {
-                        System.out.println("  Search by:");
-                        System.out.println("    a. Title");
-                        System.out.println("    b. Artist");
-                        System.out.println("    c. Album");
-                        System.out.println("    d. Genre");
-                        System.out.println("    e. Title + Artist");
-                        System.out.println("    f. Title + Artist + Genre");
-                        System.out.println("    x. Back to menu");
-                        System.out.print("  Choose (a-f, x): ");
-                        String searchType = scanner.nextLine().trim().toLowerCase();
-
-                        if (searchType.equals("x")) break;
-
-                        ArrayList<Song> results = null;
-
-                        switch (searchType) {
-                            case "a":
-                                System.out.print("Enter title: ");
-                                String st = scanner.nextLine();
-                                results = player.searchSong(st);
-                                break;
-                            case "b":
-                                System.out.print("Enter artist: ");
-                                String sa = scanner.nextLine();
-                                results = player.searchSongsByArtist(sa);
-                                if (results != null && !results.isEmpty()) {
-                                    Artist artist = results.get(0).getArtist();
-                                    System.out.println("\nArtist: " + artist.getName() + " (" + artist.getAlbumListSize() + " album(s))");
-                                }
-                                break;
-                            case "c":
-                                System.out.print("Enter album: ");
-                                String sal = scanner.nextLine();
-                                results = player.searchSongsByAlbum(sal);
-                                break;
-                            case "d":
-                                System.out.print("Enter genre: ");
-                                String sg = scanner.nextLine();
-                                results = player.filterSongsByGenre(sg);
-                                break;
-                            case "e":
-                                System.out.print("Enter title: ");
-                                String t2 = scanner.nextLine();
-                                System.out.print("Enter artist: ");
-                                String a2 = scanner.nextLine();
-                                results = player.searchSong(t2, a2);
-                                break;
-                            case "f":
-                                System.out.print("Enter title: ");
-                                String t3 = scanner.nextLine();
-                                System.out.print("Enter artist: ");
-                                String a3 = scanner.nextLine();
-                                System.out.print("Enter genre: ");
-                                String g3 = scanner.nextLine();
-                                results = player.searchSong(t3, a3, g3);
-                                break;
-                            default:
-                                System.out.println("Invalid choice.");
-                                continue;
-                        }
-
-                        if (results == null || results.isEmpty()) {
-                            System.out.println("No songs found.");
-                        } else {
-                            for (Song s : results) s.displayInfo();
-                            break;
-                        }
-                    }
+                    // Clean and simple! We call the method we created below.
+                    handleSearchMenu(player, scanner); 
                     break;
+
 
                 case 3:
                     System.out.print("Enter playlist name: ");
@@ -281,4 +225,83 @@ public class Main {
             }
         }
     }
-}
+
+
+// Simple helper method to keep the main menu clean
+    private static void handleSearchMenu(MusicPlayer player, Scanner scanner) {
+        while (true) {
+            System.out.println("  Search by:");
+            System.out.println("    a. Title");
+            System.out.println("    b. Artist");
+            System.out.println("    c. Album");
+            System.out.println("    d. Genre");
+            System.out.println("    e. Title + Artist");
+            System.out.println("    f. Title + Artist + Genre");
+            System.out.println("    x. Back to menu");
+            System.out.print("  Choose (a-f, x): ");
+            String searchType = scanner.nextLine().trim().toLowerCase();
+
+            if (searchType.equals("x")) break;
+
+            ArrayList<Song> results = null;
+
+            switch (searchType) {
+                case "a":
+                    System.out.print("Enter title: ");
+                    String st = scanner.nextLine();
+                    results = player.searchSong(st);
+                    break;
+                case "b":
+                    System.out.print("Enter artist: ");
+                    String sa = scanner.nextLine();
+                    results = player.searchSongsByArtist(sa);
+                    if (results != null && !results.isEmpty()) {
+                        Artist artist = results.get(0).getArtist();
+                        System.out.println("\nArtist: " + artist.getName() + " (" + artist.getAlbumListSize() + " album(s))");
+                    }
+                    break;
+                case "c":
+                    System.out.print("Enter album: ");
+                    String sal = scanner.nextLine();
+                    results = player.searchSongsByAlbum(sal);
+                    break;
+                case "d":
+                    System.out.print("Enter genre: ");
+                    String sg = scanner.nextLine();
+                    results = player.filterSongsByGenre(sg);
+                    break;
+                case "e":
+                    System.out.print("Enter title: ");
+                    String t2 = scanner.nextLine();
+                    System.out.print("Enter artist: ");
+                    String a2 = scanner.nextLine();
+                    Song result2 = player.searchSong(t2, a2);
+                    if (result2 == null) System.out.println("No song found.");
+                    else result2.displayInfo();
+                    break;
+                case "f":
+                    System.out.print("Enter title: ");
+                    String t3 = scanner.nextLine();
+                    System.out.print("Enter artist: ");
+                    String a3 = scanner.nextLine();
+                    System.out.print("Enter genre: ");
+                    String g3 = scanner.nextLine();
+                    Song result3 = player.searchSong(t3, a3, g3);
+                    if (result3 == null) System.out.println("No song found.");
+                    else result3.displayInfo();
+                    break;
+                default:
+                    System.out.println("Invalid input.");
+                    continue;
+            }
+
+            if (results != null) {
+                if (results.isEmpty()) {
+                    System.out.println("No results found.");
+                } else {
+                    for (Song s : results) s.displayInfo(); 
+                }
+            }    
+        }
+    }
+}    
